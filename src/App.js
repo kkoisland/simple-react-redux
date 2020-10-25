@@ -1,26 +1,47 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useDispatch, useSelector } from 'react-redux'
+import { createStore } from 'redux';
 
-function App() {
+//Action
+const INCREASE_COUNT = 'INCREASE_COUNT';
+const increment = num => {
+  return {
+    type: INCREASE_COUNT,
+    payload: num
+  };
+};
+
+// Reducer
+const initialState = { count: 0 }
+const counterReducer = (state = initialState, action) => {
+  if (action.type === INCREASE_COUNT) {
+    //ok return Object.assign({}, state, { count: state.count + action.payload })
+    return { ...state, count: state.count + action.payload }
+  }
+  return state;
+}
+
+// store
+export const store = createStore(counterReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+// This doesn't work:
+// const mapStateToProps = state => {  
+//   return {count: state.count};  
+// }
+// const mapDispatchToProps = dispatch => {
+//   increment: () => dispatch(increment())
+// }
+
+const App = () => {
+  const count = useSelector(state => state.count);
+  const dispatch = useDispatch();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div>
+      Counter: {count} <button onClick={ ()=> dispatch(increment(1))}>Increment</button>
+      </div>      
   );
 }
+
+// connect(mapStateToProps,mapDispatchToProps)(App);
 
 export default App;
